@@ -1,1 +1,0 @@
-{"timestamp": "2026-06-14T13:24:24.708950", "input": {"edad": 35, "ingresos": 2500000, "deuda": 500000}, "result": {"prediction": "approved", "class": 1, "score": 0.95}}
