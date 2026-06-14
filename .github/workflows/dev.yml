@@ -20,7 +20,8 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r app/requirements.txt
-      
+          pip install scikit-learn skl2onnx onnx
+
       - name: Create ONNX model
         run: |
           python app/create_model.py
@@ -29,10 +30,8 @@ jobs:
         run: |
           pytest tests
 
-      - name: Build
-        run: |
-          docker build -t proyecto-final-dev -f docker/Dockerfile . 
-
+  build:
+    needs: test
     runs-on: ubuntu-latest
 
     steps:
