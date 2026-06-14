@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.predictor import predict
+from predictor import predict
 from datetime import datetime
 import os
 import json
