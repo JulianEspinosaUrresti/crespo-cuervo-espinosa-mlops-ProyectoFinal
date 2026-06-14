@@ -1,25 +1,35 @@
-import onnx
-from onnx import helper, TensorProto
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.datasets import make_classification
+from skl2onnx import convert_sklearn
+from skl2onnx.common.data_types import FloatTensorType
+import os
 
-input_tensor = helper.make_tensor_value_info("input", TensorProto.FLOAT, [1, 3])
-output_tensor = helper.make_tensor_value_info("output", TensorProto.FLOAT, [1, 1])
-
-node = helper.make_node(
-    "ReduceSum",
-    inputs=["input"],
-    outputs=["output"],
-    axes=[1],
-    keepdims=1
+# Crear datos de ejemplo
+X, y = make_classification(
+    n_samples=500,
+    n_features=3,
+    n_informative=3,
+    n_redundant=0,
+    random_state=42
 )
 
-graph = helper.make_graph(
-    [node],
-    "credit_scoring_model",
-    [input_tensor],
-    [output_tensor]
+# Entrenar modelo
+model = DecisionTreeClassifier(max_depth=4)
+model.fit(X, y)
+
+# Convertir a ONNX
+initial_type = [("float_input", FloatTensorType([None, 3]))]
+
+onnx_model = convert_sklearn(
+    model,
+    initial_types=initial_type
 )
 
-model = helper.make_model(graph, producer_name="proyecto_final_mlops")
-onnx.save(model, "models/credit_model.onnx")
+# Crear carpeta si no existe
+os.makedirs("models", exist_ok=True)
 
-print("Modelo ONNX creado en models/credit_model.onnx")
+# Guardar modelo
+with open("models/credit_model.onnx", "wb") as f:
+    f.write(onnx_model.SerializeToString())
+
+print("Modelo de clasificación exportado a models/credit_model.onnx")
