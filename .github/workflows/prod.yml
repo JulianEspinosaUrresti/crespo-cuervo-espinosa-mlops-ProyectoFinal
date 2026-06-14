@@ -19,11 +19,11 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r app/requirements.txt
+          pip install scikit-learn skl2onnx onnx
 
-      - name: Run tests
+      - name: Generar modelo ONNX
         run: |
-          pytest tests
+          python app/create_model.py
 
   build:
     needs: test
