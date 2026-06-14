@@ -20,13 +20,18 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r app/requirements.txt
+      
+      - name: Create ONNX model
+        run: |
+          python app/create_model.py
 
       - name: Run tests
         run: |
           pytest tests
 
-  build:
-    needs: test
+      - name: Build
+        run: |
+          docker build -t proyecto-final-dev -f docker/Dockerfile . 
 
     runs-on: ubuntu-latest
 
