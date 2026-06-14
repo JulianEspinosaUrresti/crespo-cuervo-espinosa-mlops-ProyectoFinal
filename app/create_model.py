@@ -1,23 +1,38 @@
 from sklearn.tree import DecisionTreeClassifier
-from sklearn.datasets import make_classification
 from skl2onnx import convert_sklearn
 from skl2onnx.common.data_types import FloatTensorType
+import numpy as np
 import os
 
-# Crear datos de ejemplo
-X, y = make_classification(
-    n_samples=500,
-    n_features=3,
-    n_informative=3,
-    n_redundant=0,
-    random_state=42
-)
+X = np.array([
+    [25, 1000000, 900000],
+    [30, 1500000, 1200000],
+    [35, 2500000, 500000],
+    [40, 5000000, 300000],
+    [45, 2500000, 4000000],
+    [55, 8000000, 500000],
+    [22, 1800000, 100000],
+    [70, 15000000, 10000000],
+    [28, 1200000, 2000000],
+    [50, 6000000, 800000]
+], dtype=np.float32)
 
-# Entrenar modelo
-model = DecisionTreeClassifier(max_depth=4)
+y = np.array([
+    0,
+    0,
+    1,
+    1,
+    0,
+    1,
+    1,
+    0,
+    0,
+    1
+])
+
+model = DecisionTreeClassifier(max_depth=4, random_state=42)
 model.fit(X, y)
 
-# Convertir a ONNX
 initial_type = [("float_input", FloatTensorType([None, 3]))]
 
 onnx_model = convert_sklearn(
@@ -25,11 +40,9 @@ onnx_model = convert_sklearn(
     initial_types=initial_type
 )
 
-# Crear carpeta si no existe
 os.makedirs("models", exist_ok=True)
 
-# Guardar modelo
 with open("models/credit_model.onnx", "wb") as f:
     f.write(onnx_model.SerializeToString())
 
-print("Modelo de clasificación exportado a models/credit_model.onnx")
+print("Modelo ONNX realista exportado a models/credit_model.onnx")
