@@ -1,4 +1,3 @@
-import json
 import sys
 import os
 import json
@@ -9,17 +8,28 @@ sys.path.append(
 
 from predictor import predict
 
-def test_model_metric_threshold():
+
+def test_model_accuracy_threshold():
 
     with open("data/test_data.json", "r") as f:
         test_cases = json.load(f)
 
-    scores = []
+    correct = 0
 
     for case in test_cases:
-        result = predict(case)
-        scores.append(result["score"])
+        expected = case["esperado"]
 
-    avg_score = sum(scores) / len(scores)
+        input_data = {
+            "edad": case["edad"],
+            "ingresos": case["ingresos"],
+            "deuda": case["deuda"]
+        }
 
-    assert avg_score >= 0.80
+        result = predict(input_data)
+
+        if result["class"] == expected:
+            correct += 1
+
+    accuracy = correct / len(test_cases)
+
+    assert accuracy >= 0.80
