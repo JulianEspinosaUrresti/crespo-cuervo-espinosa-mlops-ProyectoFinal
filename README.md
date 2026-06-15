@@ -1,4 +1,4 @@
-# Proyecto Final MLOps - Modelo ONNX para Scoring de Crédito
+# Proyecto Final MLOps - Despliegue de Modelo ONNX
 
 ## Integrantes
 - David Alfonso Crespo Razeg
@@ -7,154 +7,204 @@
 
 ---
 
-## Objetivo
+## Descripción
 
-Desarrollar una solución MLOps para desplegar un modelo de scoring de crédito utilizando FastAPI, Docker, GitHub Actions, Railway y formato ONNX.
+Este proyecto implementa un flujo completo de MLOps para el despliegue de un modelo de Machine Learning exportado a formato ONNX, incluyendo:
+
+- Entrenamiento y exportación del modelo.
+- Pruebas unitarias automatizadas.
+- Integración Continua (CI).
+- Despliegue Continuo (CD).
+- Ambientes DEV y PROD.
+- Despliegue en Railway.
+- Monitoreo mediante registros de predicciones.
+- Gestión externa del modelo y de los datos de prueba.
 
 ---
 
-## Arquitectura
+# Arquitectura de la Solución
 
 ```text
-Cliente
-   │
-   ▼
-FastAPI
-   │
-   ▼
-Modelo ONNX
-   │
-   ▼
-Predicción
-   │
-   ▼
-Archivo de Logs
+GitHub Repository
+        │
+        ▼
+GitHub Actions
+        │
+        ├── Descarga modelo ONNX
+        │
+        ├── Descarga datos de prueba
+        │
+        ├── Ejecuta pruebas unitarias
+        │
+        ├── Build Docker
+        │
+        ▼
+      Railway
+      ├── DEV
+      └── PROD
 ```
 
 ---
 
-## Tecnologías Utilizadas
+# Modelo Implementado
 
-- Python 3.11
-- FastAPI
-- ONNX
-- ONNX Runtime
-- Docker
-- GitHub Actions
-- Railway
-- Pytest
+Se implementó un modelo de clasificación utilizando:
+
+```python
+DecisionTreeClassifier
+```
+
+El modelo fue exportado a formato:
+
+```text
+ONNX
+```
+
+para permitir inferencia independiente del framework utilizado durante el entrenamiento.
 
 ---
 
-## Estructura del Proyecto
+# Variables de Entrada
+
+El modelo utiliza tres variables:
+
+| Variable | Tipo |
+|-----------|--------|
+| edad | Numérica |
+| ingresos | Numérica |
+| deuda | Numérica |
+
+---
+
+# Variables de Salida
+
+El modelo genera:
+
+| Campo | Descripción |
+|---------|-------------|
+| prediction | approved / rejected |
+| class | 1 o 0 |
+| score | nivel de confianza |
+
+---
+
+# Gestión Externa del Modelo
+
+El archivo ONNX no se encuentra almacenado dentro del repositorio.
+
+Durante la ejecución del pipeline se descarga desde GitHub Releases.
+
+Release utilizado:
 
 ```text
-.
-├── .github/workflows
-│   ├── dev.yml
-│   └── prod.yml
-│
-├── app
-│   ├── main.py
-│   ├── predictor.py
-│   ├── create_model.py
-│   └── requirements.txt
-│
-├── models
-│   └── credit_model.onnx
-│
-├── tests
-│   ├── test_metrics.py
-│   └── test_prediction.py
-│
-├── Dockerfile
-├── README.md
-└── .gitignore
+v1.0-model
+```
+
+Archivo:
+
+```text
+credit_model.zip
 ```
 
 ---
 
-## Estrategia de Ramas
+# Gestión Externa de Datos de Prueba
 
-### DEV
+Los datos utilizados para las pruebas tampoco se almacenan dentro del repositorio.
 
-Rama utilizada para:
+Durante la ejecución del pipeline son descargados desde GitHub Releases.
 
-- Desarrollo
-- Pruebas
-- Integración continua
-
-Pipeline:
+Release utilizado:
 
 ```text
-Test → Build
+v1.0-model
 ```
 
-### PROD
-
-Rama utilizada para:
-
-- Producción
-- Despliegue final
-
-Pipeline:
+Archivo:
 
 ```text
-Test → Build → Deploy
+test_data.json
 ```
 
 ---
 
-## GitHub Actions
+# Pruebas Unitarias
 
-### DEV
+El proyecto contiene pruebas automatizadas para validar:
 
-Ejecuta:
+## Test 1
 
-- Instalación de dependencias
-- Generación del modelo ONNX
-- Ejecución de pruebas
+Validar que el modelo genere una respuesta válida.
 
-### PROD
+Archivo:
 
-Ejecuta:
-
-- Instalación de dependencias
-- Generación del modelo ONNX
-- Ejecución de pruebas
-- Construcción para producción
+```text
+tests/test_prediction.py
+```
 
 ---
 
-## Despliegues
+## Test 2
 
-### Ambiente DEV
+Validar que la métrica mínima del modelo se mantenga sobre el umbral establecido.
 
-URL:
+Archivo:
 
-(Pegar URL DEV)
+```text
+tests/test_metrics.py
+```
 
-### Ambiente PROD
+---
 
-URL:
+# CI/CD
 
-(Pegar URL PROD)
+El proyecto utiliza GitHub Actions para automatizar:
+
+1. Descarga del modelo ONNX.
+2. Descarga de datos de prueba.
+3. Ejecución de pruebas unitarias.
+4. Construcción de imagen Docker.
+5. Despliegue automático.
+
+---
+
+# Ambientes
+
+## Ambiente DEV
 
 Swagger:
 
-(Pegar URL PROD/docs)
+```text
+https://crespo-cuervo-espinosa-mlops-proyectofinal-production.up.railway.app/docs
+```
+
+Endpoint:
+
+```text
+POST /predict
+```
 
 ---
 
-## Endpoint de Predicción
+## Ambiente PROD
 
-POST
+Swagger:
 
 ```text
-/predict
+https://authentic-simplicity-production-5b90.up.railway.app/docs
 ```
 
-Ejemplo:
+Endpoint:
+
+```text
+POST /predict
+```
+
+---
+
+# Ejemplo de Consumo
+
+## Request
 
 ```json
 {
@@ -164,7 +214,7 @@ Ejemplo:
 }
 ```
 
-Respuesta:
+## Response
 
 ```json
 {
@@ -176,53 +226,90 @@ Respuesta:
 
 ---
 
-## Pruebas
+# Monitoreo de Predicciones
 
-Ejecutar:
+Todas las inferencias realizadas por los ambientes DEV y PROD son registradas para fines de monitoreo y trazabilidad.
 
-```bash
-python -m pytest tests
-```
-
-Resultado esperado:
+Release utilizado:
 
 ```text
-2 passed
+prediction-logs
+```
+
+Archivos:
+
+```text
+predicciones_dev.txt
+predicciones_prod.txt
 ```
 
 ---
 
-## Docker
+# Contenedorización
 
-Construcción:
+El proyecto utiliza Docker para empaquetar la aplicación.
+
+Construcción local:
 
 ```bash
-docker build -t credit-scoring .
+docker build -t mlops-final .
 ```
 
-Ejecución:
+Ejecución local:
 
 ```bash
-docker run -p 8000:8000 credit-scoring
+docker run -p 8000:8000 mlops-final
 ```
 
 ---
 
-## Modelo ONNX
+# Gestión de Ramas
 
-El modelo ONNX se genera automáticamente durante el proceso de CI/CD mediante:
+## Rama Principal
 
-```python
-create_model.py
+```text
+main
 ```
+
+Características:
+
+- Rama protegida.
+- Requiere Pull Request.
+- Requiere validación de checks.
+- Requiere ramas actualizadas antes del merge.
 
 ---
 
-## Evidencia de CI/CD
+# Tecnologías Utilizadas
 
-- GitHub Actions DEV
-- GitHub Actions PROD
-- Railway DEV
-- Railway PROD
-- Endpoint FastAPI
-- Modelo ONNX
+- Python 3.11
+- FastAPI
+- ONNX Runtime
+- Scikit-Learn
+- Docker
+- GitHub Actions
+- Railway
+- GitHub Releases
+
+---
+
+# Estado Final del Proyecto
+
+| Componente | Estado |
+|------------|---------|
+| Modelo ONNX | ✅ |
+| Datos externos | ✅ |
+| Tests automatizados | ✅ |
+| Docker | ✅ |
+| GitHub Actions | ✅ |
+| Ambiente DEV | ✅ |
+| Ambiente PROD | ✅ |
+| Monitoreo | ✅ |
+| Rama protegida | ✅ |
+| CI/CD | ✅ |
+
+---
+
+# Autor
+
+Proyecto desarrollado como entrega final de la asignatura de MLOps.

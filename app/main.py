@@ -24,8 +24,9 @@ def make_prediction(data: dict):
 
     log_record = {
         "timestamp": datetime.now().isoformat(),
+        "environment": ENVIRONMENT,
         "input": data,
-        "result": result
+        "prediction": result
     }
 
     with open(LOG_FILE, "a", encoding="utf-8") as file:

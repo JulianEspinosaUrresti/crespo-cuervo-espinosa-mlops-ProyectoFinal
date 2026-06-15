@@ -1,0 +1,50 @@
+[
+  {
+    "edad": 25,
+    "ingresos": 1000000,
+    "deuda": 900000,
+    "esperado": 0
+  },
+  {
+    "edad": 35,
+    "ingresos": 2500000,
+    "deuda": 500000,
+    "esperado": 1
+  },
+  {
+    "edad": 55,
+    "ingresos": 8000000,
+    "deuda": 500000,
+    "esperado": 1
+  },
+  {
+    "edad": 45,
+    "ingresos": 2500000,
+    "deuda": 4000000,
+    "esperado": 0
+  },
+  {
+    "edad": 30,
+    "ingresos": 2000000,
+    "deuda": 1000000,
+    "esperado": 1
+  },
+  {
+    "edad": 28,
+    "ingresos": 1200000,
+    "deuda": 2000000,
+    "esperado": 0
+  },
+  {
+    "edad": 50,
+    "ingresos": 6000000,
+    "deuda": 800000,
+    "esperado": 1
+  },
+  {
+    "edad": 70,
+    "ingresos": 15000000,
+    "deuda": 10000000,
+    "esperado": 0
+  }
+]
