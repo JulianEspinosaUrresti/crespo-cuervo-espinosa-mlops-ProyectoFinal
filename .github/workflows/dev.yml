@@ -22,9 +22,12 @@ jobs:
           pip install -r app/requirements.txt
           pip install scikit-learn skl2onnx onnx
 
-      - name: Create ONNX model
+      - name: Download test data and ONNX model
         run: |
-          python app/create_model.py
+          mkdir -p data models
+          curl -L -o data/test_data.json "https://github.com/user-attachments/files/28938272/test_data.json"
+          curl -L -o credit_model.zip "https://github.com/user-attachments/files/28932066/credit_model.zip"
+          unzip -o credit_model.zip -d models
 
       - name: Run tests
         run: |
