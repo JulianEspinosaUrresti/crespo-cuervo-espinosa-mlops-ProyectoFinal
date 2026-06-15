@@ -26,8 +26,7 @@ jobs:
         run: |
           mkdir -p data models
           curl -L -o data/test_data.json "https://github.com/user-attachments/files/28938272/test_data.json"
-          curl -L -o credit_model.zip "https://github.com/user-attachments/files/28932066/credit_model.zip"
-          unzip -o credit_model.zip -d models    
+          curl -L -o models/credit_model.onnx "https://github.com/JulianEspinosaUrresti/crespo-cuervo-espinosa-mlops-ProyectoFinal/releases/download/v1.0-model/credit_model.onnx"    
 
   build:
     needs: test
