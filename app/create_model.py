@@ -2,33 +2,15 @@ from sklearn.tree import DecisionTreeClassifier
 from skl2onnx import convert_sklearn
 from skl2onnx.common.data_types import FloatTensorType
 import numpy as np
+import pandas as pd
 import os
 
-X = np.array([
-    [25, 1000000, 900000],
-    [30, 1500000, 1200000],
-    [35, 2500000, 500000],
-    [40, 5000000, 300000],
-    [45, 2500000, 4000000],
-    [55, 8000000, 500000],
-    [22, 1800000, 100000],
-    [70, 15000000, 10000000],
-    [28, 1200000, 2000000],
-    [50, 6000000, 800000]
-], dtype=np.float32)
+DATASET_URL = "https://github.com/user-attachments/files/28943409/train_data.csv"
 
-y = np.array([
-    0,
-    0,
-    1,
-    1,
-    0,
-    1,
-    1,
-    0,
-    0,
-    1
-])
+df = pd.read_csv(DATASET_URL)
+
+X = df[["edad", "ingresos", "deuda"]]
+y = df["aprobado"]
 
 model = DecisionTreeClassifier(max_depth=4, random_state=42)
 model.fit(X, y)
