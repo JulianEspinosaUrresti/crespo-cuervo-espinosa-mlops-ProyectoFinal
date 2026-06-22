@@ -68,7 +68,7 @@ def make_prediction(data: dict):
     log_line = json.dumps(log_record, ensure_ascii=False)
 
     with open(LOG_FILE, "a", encoding="utf-8") as file:
-         file.write(log_line + "\n")
+         file.write(log_line + "PRUEBA" + "\n")
 
     save_log_to_gist(log_line)
 
